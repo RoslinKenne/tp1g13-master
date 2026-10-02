@@ -14,8 +14,8 @@ public class Companie {
     //constructeur
     public Companie(String nomCompanie, int maxChauffeurs, int maxBus) {
         this.nomCompanie = nomCompanie;
-        this.chauffeur = new Chauffeur[maxChauffeurs];
-        this.bus = new Bus[maxBus];
+        this.chauffeur = new Chauffeur[Math.max(1,maxChauffeurs)];
+        this.bus = new Bus[Math.max(1,maxBus)];
         nbChauffeurs = 0;
         nbBus = 0;
     }
@@ -33,7 +33,8 @@ public class Companie {
     }
 
     public void setChauffeur(Chauffeur[] chauffeur) {
-        this.chauffeur = chauffeur;
+        this.chauffeur = Arrays.stream(chauffeur).filter(java.util.Objects::nonNull).toArray(Chauffeur[]::new);
+        this.nbChauffeurs = this.chauffeur.length;
     }
 
     public Bus[] getBus() {
@@ -41,7 +42,8 @@ public class Companie {
     }
 
     public void setBus(Bus[] bus) {
-        this.bus = bus;
+        this.bus = Arrays.stream(bus).filter(java.util.Objects::nonNull).toArray(Bus[]::new);
+        this.nbBus = this.bus.length;
     }
 
     //methode pour verifier si le chauffeur existe deja
@@ -71,7 +73,7 @@ public class Companie {
         }
         if (nbChauffeurs >= chauffeur.length) {
             //agrandir le tableau si plein
-            Chauffeur[] nouveauTableau = new Chauffeur[chauffeur.length * 2];
+            Chauffeur[] nouveauTableau = new Chauffeur[Math.max(1,chauffeur.length * 2)];
             System.arraycopy(chauffeur, 0, nouveauTableau, 0, chauffeur.length);
             chauffeur= nouveauTableau;
         }
@@ -86,7 +88,7 @@ public class Companie {
         }
         if (nbBus >= bus.length) {
             //agrandir le tableau si plein
-            Bus[] nouveauTableau = new Bus[bus.length * 2];
+            Bus[] nouveauTableau = new Bus[Math.max(1,bus.length * 2)];
             System.arraycopy(bus, 0, nouveauTableau, 0, bus.length);
             bus= nouveauTableau;
         }
@@ -115,6 +117,7 @@ public class Companie {
 
     // Méthode pour réserver un bus avec un trajet et un chauffeur
     public void reserverBus(String idChauffeur, String imm, Trajet trajet) throws ErreurException {
+        if (trajet == null) throw new ErreurException("Trajet requis");
         Bus bus = trouverBus(imm);
         Chauffeur chauffeur = trouverChauffeur(idChauffeur);
         if (bus.getChauffeur()!=null){
@@ -124,6 +127,7 @@ public class Companie {
             chauffeur.ajouterTrajetAssocie(trajet);
             bus.setChauffeur(chauffeur);
             trajet.setBusUtilise(bus);
+            bus.setTrajet(trajet);
         }
     }
 
@@ -146,7 +150,7 @@ public class Companie {
 
 
     public Bus[] trouverBusConduits(String idChauffeur) {
-        Bus[] busConduits = new Bus[nbMaxBus];
+        Bus[] busConduits = new Bus[nbBus];
         int count = 0; // Initialiser le compteur à 0
 
         for (int i = 0; i < nbBus; i++) {

@@ -7,6 +7,9 @@ public class Bus {
     private Trajet trajet;
     //costructeur
     public Bus(String numImm, String couleur, double capReservoir, int nbrePassagers) {
+        if (numImm == null || numImm.isBlank() || couleur == null || couleur.isBlank()
+            || !Double.isFinite(capReservoir) || capReservoir <= 0 || nbrePassagers <= 0)
+            throw new IllegalArgumentException("Caractéristiques du bus invalides");
         this.numImm = numImm;
         this.couleur = couleur;
         this.capReservoir = capReservoir;

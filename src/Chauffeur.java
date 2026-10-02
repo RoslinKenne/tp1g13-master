@@ -11,10 +11,13 @@ public class Chauffeur {
 
     //constructeur
     public Chauffeur(String nom, String prenom, String adresse, String numId, int age, int anneeE ,int nbTrajetsAssocies) {
+        if (nom == null || nom.trim().isEmpty() || prenom == null || prenom.trim().isEmpty()
+            || age < 18 || anneeE < 1900 || anneeE > java.time.Year.now().getValue())
+            throw new IllegalArgumentException("Identité, âge ou année invalides");
         this.nom = nom;
         this.prenom = prenom;
         this.adresse = adresse;
-        this.numId = genererId(nom,prenom,anneeE);
+        this.numId = numId == null || numId.isBlank() ? genererId(nom,prenom,anneeE) : numId;
         this.age = age;
         this.anneeE = anneeE;
 
@@ -75,21 +78,22 @@ public class Chauffeur {
     }
 
     public void setTrajetAssocie(Trajet[] trajetAssocie) {
-        this.trajetAssocies = trajetAssocie;
+        this.trajetAssocies = Arrays.stream(trajetAssocie).filter(java.util.Objects::nonNull).toArray(Trajet[]::new);
+        this.nbTrajetsAssocies = (int)Arrays.stream(trajetAssocie).filter(java.util.Objects::nonNull).count();
     }
 
     public static String genererId(String nom, String prenom, int anneeE){
-        return nom.substring(0, 4) + prenom.substring(0, 1) + String.valueOf(anneeE).substring(2);
+        if (nom == null || nom.isBlank() || prenom == null || prenom.isBlank())
+            throw new IllegalArgumentException("Nom et prénom requis");
+        return nom.substring(0, Math.min(4, nom.length())) + prenom.substring(0, 1) + anneeE;
     }
     //methode pour ajouter un trajet associe
     public void ajouterTrajetAssocie(Trajet trajet) throws ErreurException {
-        //  si le nombre maximum de trajets associes est atteint
-        if (this.nbTrajetsAssocies < trajetAssocies.length) {
-            trajetAssocies[this.nbTrajetsAssocies++] = trajet;
-            System.out.println("Trajet ajouté avec succès.");
-        } else {
-            throw new ErreurException ("Le nombre maximum de trajets associés est atteint.");
-        }
+        if (trajet == null) throw new ErreurException("Trajet requis");
+        if (nbTrajetsAssocies == trajetAssocies.length)
+            trajetAssocies = Arrays.copyOf(trajetAssocies, Math.max(1,trajetAssocies.length*2));
+        trajetAssocies[nbTrajetsAssocies++] = trajet;
+
     }
 
 

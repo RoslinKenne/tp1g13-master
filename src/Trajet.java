@@ -8,6 +8,9 @@ public class Trajet {
 
     //contructeur
     public Trajet(String villeDepart, String villeArrivee, double klDepart, double klArrivee) {
+        if (villeDepart == null || villeDepart.isBlank() || villeArrivee == null || villeArrivee.isBlank()
+            || !Double.isFinite(klDepart) || !Double.isFinite(klArrivee) || klDepart < 0 || klArrivee < klDepart)
+            throw new IllegalArgumentException("Trajet ou kilométrage invalide");
         this.villeDepart = villeDepart;
         this.villeArrivee = villeArrivee;
         this.klDepart = klDepart;

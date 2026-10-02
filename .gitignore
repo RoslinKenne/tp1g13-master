@@ -27,3 +27,15 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+# Fichiers générés ou locaux
+bin/
+obj/
+build/
+node_modules/
+__pycache__/
+.venv/
+.idea/
+.env
+*.pfx
+data/
+*.patch
